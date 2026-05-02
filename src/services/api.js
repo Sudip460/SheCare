@@ -7,9 +7,39 @@ async function request(path, payload) {
     body: JSON.stringify(payload),
   });
 
+  const rawText = await response.text();
+  let data = {};
+  try {
+    data = rawText ? JSON.parse(rawText) : {};
+  } catch {
+    data = { raw: rawText };
+  }
+
+  if (!response.ok) {
+    console.error("API request failed", {
+      path,
+      status: response.status,
+      statusText: response.statusText,
+      response: data,
+    });
+    throw new Error(data.error || data.raw || `Request failed (${response.status})`);
+  }
+  return data;
+}
+
+async function uploadReport(uid, file) {
+  const formData = new FormData();
+  formData.append("uid", uid);
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/upload-report`, {
+    method: "POST",
+    body: formData,
+  });
+
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error || "Request failed");
+    throw new Error(data.error || "Upload failed");
   }
   return data;
 }
@@ -18,4 +48,6 @@ export const api = {
   chat: (payload) => request("/chat", payload),
   analyze: (payload) => request("/analyze", payload),
   generateReport: (payload) => request("/generate-report", payload),
+  assistant: (payload) => request("/assistant", payload),
+  uploadReport,
 };

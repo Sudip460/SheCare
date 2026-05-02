@@ -23,11 +23,24 @@ if (missingFirebaseEnvVars.length > 0) {
   );
 }
 
+function normalizeStorageBucket(bucket) {
+  if (!bucket) return bucket;
+
+  // Firebase web uploads expect the underlying Cloud Storage bucket name.
+  // Some console views show a `*.firebasestorage.app` host-like value, which
+  // causes resumable uploads to hit a non-working bucket target from the SDK.
+  if (bucket.endsWith(".firebasestorage.app")) {
+    return `${bucket.replace(/\.firebasestorage\.app$/, "")}.appspot.com`;
+  }
+
+  return bucket;
+}
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  storageBucket: normalizeStorageBucket(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET),
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };

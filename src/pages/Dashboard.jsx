@@ -73,6 +73,7 @@ function metricValueLines(label, value, compact) {
 }
 
 function riskPercent(analysis) {
+  if (typeof analysis.probability === "number") return Math.min(100, Math.round(analysis.probability));
   if (typeof analysis.score === "number") return Math.min(100, Math.round((analysis.score / 10) * 100));
   if (analysis.riskLevel === "High") return 80;
   if (analysis.riskLevel === "Medium") return 50;
@@ -109,10 +110,9 @@ export default function Dashboard() {
     cyclePrediction: "Complete an assessment",
     recommendations: ["Start a symptom check to generate personalized guidance."],
     mentalTips: ["Track stress and sleep alongside cycle changes."],
+    dashboardCards: {},
   };
   const score = riskPercent(analysis);
-  const circumference = 2 * Math.PI * 46;
-  const offset = circumference - (score / 100) * circumference;
   const doctorStatus = userProfile?.doctorStatus || "none";
   return (
     <PatientDashboardShell assistant={<SheCareAssistant sessions={sessions} />}>
@@ -124,7 +124,8 @@ export default function Dashboard() {
         const summarySubClass = isAssistantOpen ? "mt-2 text-sm leading-6" : "mt-2 text-sm";
         const summaryIconWrapClass = isAssistantOpen ? "h-14 w-14 rounded-3xl" : "h-14 w-14 rounded-3xl";
         const summaryIconClass = isAssistantOpen ? 26 : 27;
-        const periodValue = nextPeriodLabel(analysis.cyclePrediction);
+        const dashboardCards = analysis.dashboardCards || {};
+        const periodValue = nextPeriodLabel(dashboardCards.nextPeriod || analysis.cyclePrediction);
         const compactPeriodValue = isAssistantOpen ? compactDateLabel(periodValue) : periodValue;
 
         return (
@@ -132,9 +133,9 @@ export default function Dashboard() {
       <div className={`grid gap-5 ${summaryGridClass}`}>
         {[
           [CalendarDays, "Next Period", compactPeriodValue, sessions[0]?.answers?.last_period || "Track date"],
-          [Zap, "Cycle Length", "28 Days", "Regular"],
+          [Zap, "Cycle Length", dashboardCards.cycleLength || "Not recorded", analysis.reportSummary ? "From report analysis" : "From assessment"],
           [ShieldCheck, "PCOS Risk", analysis.riskLevel, score ? `Risk: ${score}%` : "Risk pending"],
-          [HeartPulse, "Overall Health", analysis.riskLevel === "High" ? "Needs Care" : "Good", "Keep it up!"],
+          [HeartPulse, "Overall Health", dashboardCards.overallHealth || (analysis.riskLevel === "High" ? "Needs Care" : "Stable"), dashboardCards.overallHealthNote || "Keep tracking your health."],
         ].map(([Icon, label, value, sub]) => {
           const valueLines = metricValueLines(label, value, isAssistantOpen);
           const labelValueClass =
@@ -213,33 +214,29 @@ export default function Dashboard() {
       <div className={`mt-5 grid gap-5 ${detailGridClass}`}>
         <section className="shecare-card min-w-0 rounded-3xl p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Health Overview</h2>
+            <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Report Insights</h2>
             <span className="rounded-2xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 dark:border-white/10 dark:text-slate-300">
-              This Month
+              Gemini + ML
             </span>
           </div>
-          <div className="mt-7 h-56 overflow-hidden rounded-3xl bg-gradient-to-b from-fuchsia-50 to-white p-4 sm:p-5 dark:from-white/10 dark:to-transparent">
-            <svg viewBox="0 0 520 180" className="h-full w-full">
-              {[0, 45, 90, 135].map((y) => (
-                <line key={y} x1="20" x2="500" y1={20 + y} y2={20 + y} stroke="#e5e7eb" />
-              ))}
-              <polyline
-                fill="none"
-                stroke="#ec4899"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="5"
-                points="25,140 85,88 145,112 205,82 265,84 325,54 385,90 445,64 500,78"
-              />
-              {[25, 85, 145, 205, 265, 325, 385, 445, 500].map((x, i) => (
-                <circle key={x} cx={x} cy={[140, 88, 112, 82, 84, 54, 90, 64, 78][i]} r="6" fill="#ec4899" />
-              ))}
-            </svg>
+          <div className="mt-5 rounded-3xl bg-gradient-to-b from-fuchsia-50 to-white p-5 dark:from-white/10 dark:to-transparent">
+            <p className="text-sm leading-7 text-slate-700 dark:text-slate-300">
+              {analysis.reportSummary || "Upload a PDF or lab image during the assessment to extract lab values and report context with Gemini."}
+            </p>
           </div>
-          <div className="mt-5 grid grid-cols-2 gap-3 text-sm font-semibold text-slate-600 dark:text-slate-300 md:grid-cols-4">
-            {["Mood Good", "Energy High", "Sleep 7.5 hrs", "Activity Active"].map((item) => (
-              <span key={item} className="rounded-2xl bg-slate-50 px-3 py-2 dark:bg-white/10">{item}</span>
-            ))}
+          <div className="mt-5 grid grid-cols-1 gap-3 text-sm font-semibold text-slate-600 dark:text-slate-300 md:grid-cols-2">
+            {[
+              analysis.featuresUsed?.TSH ? `TSH ${analysis.featuresUsed.TSH}` : null,
+              analysis.featuresUsed?.LH_FSH_ratio ? `LH/FSH ${analysis.featuresUsed.LH_FSH_ratio}` : null,
+              analysis.featuresUsed?.glucose ? `Glucose ${analysis.featuresUsed.glucose}` : null,
+              analysis.featuresUsed?.hemoglobin ? `Hemoglobin ${analysis.featuresUsed.hemoglobin}` : null,
+            ]
+              .filter(Boolean)
+              .map((item) => (
+                <span key={item} className="rounded-2xl bg-slate-50 px-3 py-2 dark:bg-white/10">
+                  {item}
+                </span>
+              ))}
           </div>
         </section>
 

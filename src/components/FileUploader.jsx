@@ -1,13 +1,21 @@
 import { useState } from "react";
 import { UploadCloud } from "lucide-react";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
-import { db, storage } from "../services/firebase";
+import { api } from "../services/api.js";
 
 export default function FileUploader({ uid, onUploaded }) {
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
+
+  function getUploadErrorMessage(error) {
+    const message = String(error?.message || "");
+
+    if (message.includes("Failed to fetch")) {
+      return "The backend upload service is unreachable. Make sure Flask is running on http://localhost:5000.";
+    }
+
+    return message || "Upload failed. Check Firebase Storage setup and try again.";
+  }
 
   function handleFileChange(event) {
     const file = event.target.files?.[0];
@@ -21,31 +29,21 @@ export default function FileUploader({ uid, onUploaded }) {
 
     setUploading(true);
     setProgress(0);
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const storageRef = ref(storage, `users/${uid}/reports/${Date.now()}-${safeName}`);
-    const task = uploadBytesResumable(storageRef, file);
+    setProgress(35);
 
-    task.on(
-      "state_changed",
-      (snapshot) => {
-        setProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100));
-      },
-      (error) => {
-        setUploading(false);
-        toast.error(error.message);
-      },
-      async () => {
-        const fileUrl = await getDownloadURL(task.snapshot.ref);
-        await addDoc(collection(db, "users", uid, "reports"), {
-          fileUrl,
-          fileName: file.name,
-          createdAt: serverTimestamp(),
-        });
+    api
+      .uploadReport(uid, file)
+      .then((uploadedFile) => {
+        setProgress(100);
         setUploading(false);
         toast.success("Report uploaded");
-        onUploaded?.({ fileUrl, fileName: file.name });
-      }
-    );
+        onUploaded?.(uploadedFile);
+      })
+      .catch((error) => {
+        setUploading(false);
+        setProgress(0);
+        toast.error(getUploadErrorMessage(error));
+      });
   }
 
   return (

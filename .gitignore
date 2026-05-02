@@ -8,3 +8,4 @@ __pycache__/
 server/serviceAccountKey.json
 server/generated_reports/*.pdf
 generated_reports/*.pdf
+server/uploaded_reports/

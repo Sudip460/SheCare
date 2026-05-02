@@ -35,11 +35,52 @@ npm run dev
 
 The app runs at `http://localhost:5173` and the API at `http://localhost:5000`.
 
+## Gemini Assistant
+
+The left-side SheCare assistant can use the Gemini API for more natural, conversational replies while still grounding answers in the user's latest PCOS assessment result.
+
+Add these environment variables before starting Flask:
+
+```bash
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+If `GEMINI_API_KEY` is missing, the assistant falls back to a simple rule-based reply mode.
+
 ## Firebase
 
 Enable Email/Password Authentication in Firebase. Deploy `firestore.rules` and `storage.rules` so each authenticated user can only read and write paths under `users/{uid}`.
 
-Frontend uploads medical files directly to Firebase Storage at:
+If local file uploads fail with a Firebase Storage CORS or preflight error from `http://localhost:5173`, apply the included [cors.json](/d:/programmingCode/vs%20code/Full%20Stack/sheCare/SheCare/cors.json:1) to your bucket:
+
+```bash
+gcloud storage buckets update gs://shecare-8015f.appspot.com --cors-file=cors.json
+```
+
+or:
+
+```bash
+gsutil cors set cors.json gs://shecare-8015f.appspot.com
+```
+
+Make sure Firebase Storage is enabled for the project, the correct bucket is configured, and your app user is signed in before uploading reports.
+
+For local development, report uploads go through the Flask backend and are stored under:
+
+```text
+server/uploaded_reports/{uid}/
+```
+
+The backend exposes them at:
+
+```text
+/uploads/{uid}/{filename}
+```
+
+If you later want browser-direct Firebase uploads in production, keep the Storage bucket configured and CORS-enabled.
+
+Historical Firebase upload path used by the app:
 
 ```text
 users/{uid}/reports/

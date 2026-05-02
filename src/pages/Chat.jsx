@@ -15,17 +15,33 @@ import { db } from "../services/firebase.js";
 
 const initialMessage = {
   role: "bot",
-  text: "Hi, I am SheCare. I will ask a few questions about your cycle, symptoms, lifestyle, and wellbeing. What is your age?",
+  text: "Hi, I am SheCare. I will ask a few questions about your cycle, symptoms, lifestyle, and wellbeing to estimate PCOS risk. What is your usual cycle length in days?",
 };
 
 const progressByStep = {
-  age: 12,
-  lifestyle: 25,
-  last_period: 38,
-  cycle_regularity: 52,
-  symptoms: 66,
-  stress_level: 80,
-  sleep_hours: 92,
+  cycle_length: 4,
+  cycle_irregularity: 8,
+  missed_periods: 12,
+  period_duration: 16,
+  delay_max: 20,
+  last_period: 24,
+  acne: 28,
+  acne_severity: 32,
+  hair_loss: 36,
+  hair_loss_severity: 40,
+  hirsutism: 44,
+  hirsutism_severity: 48,
+  weight_gain: 52,
+  weight_gain_recent: 56,
+  dark_patches: 60,
+  BMI: 64,
+  stress_level: 68,
+  sleep_hours: 72,
+  exercise_days: 76,
+  activity_level: 80,
+  work_type: 84,
+  meal_regularity: 88,
+  meal_skipping: 92,
   upload_ack: 96,
   complete: 100,
 };
@@ -34,7 +50,7 @@ export default function Chat() {
   const { user, userProfile } = useAuth();
   const [messages, setMessages] = useState([initialMessage]);
   const [message, setMessage] = useState("");
-  const [state, setState] = useState({ step: "age", answers: {} });
+  const [state, setState] = useState({ step: "cycle_length", answers: {} });
   const [typing, setTyping] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
