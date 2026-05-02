@@ -120,8 +120,8 @@ export default function Dashboard() {
         const summaryGridClass = isAssistantOpen ? "md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-4";
         const detailGridClass = isAssistantOpen ? "2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]" : "xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]";
         const summaryCardClass = isAssistantOpen ? "rounded-[1.75rem] p-5" : "rounded-3xl p-5";
-        const summaryValueClass = isAssistantOpen ? "mt-3 text-[1.6rem] leading-tight sm:text-[1.85rem]" : "mt-4 text-2xl";
-        const summarySubClass = isAssistantOpen ? "mt-3 text-sm leading-6" : "mt-2 text-sm";
+        const summaryValueClass = isAssistantOpen ? "mt-3 text-[1.15rem] leading-snug sm:text-[1.3rem]" : "mt-4 text-[1.35rem] leading-snug sm:text-[1.55rem]";
+        const summarySubClass = isAssistantOpen ? "mt-2 text-sm leading-6" : "mt-2 text-sm";
         const summaryIconWrapClass = isAssistantOpen ? "h-14 w-14 rounded-3xl" : "h-14 w-14 rounded-3xl";
         const summaryIconClass = isAssistantOpen ? 26 : 27;
         const periodValue = nextPeriodLabel(analysis.cyclePrediction);
@@ -140,10 +140,12 @@ export default function Dashboard() {
           const labelValueClass =
             label === "Next Period"
               ? isAssistantOpen
-                ? "text-[1.45rem] sm:text-[1.7rem]"
-                : "text-[1.35rem] sm:text-[1.55rem]"
+                ? "text-[1.05rem] sm:text-[1.18rem]"
+                : "text-[1.12rem] sm:text-[1.28rem]"
               : isAssistantOpen && label === "Overall Health"
-              ? "text-[1.45rem] sm:text-[1.7rem]"
+              ? "text-[1.12rem] sm:text-[1.25rem]"
+              : !isAssistantOpen && label === "Overall Health"
+              ? "text-[1.18rem] sm:text-[1.34rem]"
                 : "";
 
           return (

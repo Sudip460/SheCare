@@ -101,10 +101,12 @@ export default function PatientDashboardShell({ children, assistant }) {
           <section className="mx-auto min-w-0 max-w-6xl px-4 pb-28 pt-6 sm:px-5 lg:px-8 lg:pb-10 lg:pt-8">
           <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
             <div className="min-w-0">
-              <h1 className="text-3xl font-extrabold tracking-normal text-slate-950 dark:text-white md:text-4xl">
+              <h1 className="text-2xl font-extrabold tracking-normal text-slate-950 dark:text-white sm:text-3xl md:text-[2.6rem]">
                 Hello, <span className="text-health-purple">{userProfile?.displayName || "there"}</span>
               </h1>
-              <p className="mt-2 break-words text-slate-600 dark:text-slate-300">Let&apos;s take care of your health today!</p>
+              <p className="mt-2 break-words text-sm text-slate-600 dark:text-slate-300 sm:text-base">
+                Let&apos;s take care of your health today!
+              </p>
             </div>
             <div className="hidden items-center gap-5 lg:flex">
               <Link to="/profile" className="grid h-12 w-12 place-items-center rounded-full bg-health-lavender text-health-purple">
