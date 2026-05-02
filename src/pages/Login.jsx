@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import Button from "../components/Button.jsx";
@@ -15,6 +16,7 @@ export default function Login() {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [wantsConsultancy, setWantsConsultancy] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -63,7 +65,7 @@ export default function Login() {
   return (
     <main className="page-shell">
       <Navbar />
-      <section className="mx-auto grid max-w-6xl place-items-center px-5 py-12">
+      <section className="mx-auto grid max-w-6xl place-items-center px-5 py-8 sm:py-12">
         <Card className={`w-full ${isRegisteringPatient ? "max-w-4xl" : "max-w-md"}`}>
           <h1 className="text-3xl font-bold text-ink dark:text-slate-100">
             {isDoctorLogin ? "Doctor login" : mode === "login" ? "Patient login" : "Create patient account"}
@@ -86,10 +88,21 @@ export default function Login() {
             <InputField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <InputField
               label="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              rightElement={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="rounded-full p-1 text-slate-500 transition hover:text-health-purple focus:outline-none focus-visible:ring-2 focus-visible:ring-health-sky dark:text-slate-400 dark:hover:text-violet-200"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
               required
             />
             {isRegisteringPatient && (

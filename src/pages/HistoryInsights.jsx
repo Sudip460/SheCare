@@ -29,7 +29,7 @@ export default function HistoryInsights() {
 
   return (
     <PatientDashboardShell assistant={<SheCareAssistant sessions={sessions} />}>
-      <section className="shecare-card rounded-3xl p-6">
+      <section className="shecare-card min-w-0 rounded-3xl p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <span className="grid h-12 w-12 place-items-center rounded-2xl bg-health-lavender text-health-purple">
             <History />
@@ -48,18 +48,18 @@ export default function HistoryInsights() {
             </p>
           )}
           {sessions.map((session) => (
-            <article key={session.id} className="rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
+            <article key={session.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
               <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <p className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
                     <CalendarDays size={16} />
                     {formatDate(session.createdAt)}
                   </p>
                   <h3 className="mt-3 text-xl font-extrabold text-slate-950 dark:text-white">{session.riskLevel || "Assessment"} risk</h3>
-                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Cycle prediction: {session.cyclePrediction || "Unavailable"}</p>
+                  <p className="mt-2 break-words text-sm text-slate-600 dark:text-slate-300">Cycle prediction: {session.cyclePrediction || "Unavailable"}</p>
                 </div>
                 {session.reportUrl && (
-                  <a className="inline-flex items-center gap-2 rounded-2xl bg-health-purple px-4 py-3 text-sm font-bold text-white" href={session.reportUrl} target="_blank" rel="noreferrer">
+                  <a className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-health-purple px-4 py-3 text-sm font-bold text-white sm:w-auto" href={session.reportUrl} target="_blank" rel="noreferrer">
                     <Download size={17} />
                     Report
                   </a>

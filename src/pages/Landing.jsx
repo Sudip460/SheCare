@@ -8,12 +8,12 @@ export default function Landing() {
   return (
     <main className="page-shell">
       <Navbar />
-      <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-10 px-5 pb-12 pt-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <div>
+      <section className="mx-auto grid min-h-[calc(100vh-96px)] max-w-6xl items-center gap-10 px-5 pb-12 pt-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <div className="min-w-0">
           <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-slate-300">
             Private, guided women&apos;s health assessment
           </p>
-          <h1 className="max-w-3xl text-5xl font-bold leading-tight tracking-normal text-ink dark:text-slate-100 md:text-7xl">
+          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-normal text-ink dark:text-slate-100 sm:text-5xl md:text-7xl">
             SheCare AI
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-muted dark:text-slate-300">
@@ -57,7 +57,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <div className="grid gap-4">
+        <div className="min-w-0 grid gap-4">
           <Card className="p-5">
             <div className="flex items-center justify-between">
               <div>

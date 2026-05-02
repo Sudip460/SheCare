@@ -107,14 +107,14 @@ export default function Profile() {
       <Navbar />
       <section className="mx-auto max-w-6xl px-5 pb-12">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-muted dark:text-slate-400">
               {isDoctor ? "Doctor profile" : "Patient profile"}
             </p>
-            <h1 className="mt-2 text-4xl font-bold text-ink dark:text-slate-100">
+            <h1 className="mt-2 break-words text-4xl font-bold text-ink dark:text-slate-100">
               {userProfile?.displayName || user?.email}
             </h1>
-            <p className="mt-2 flex items-center gap-2 text-sm text-muted dark:text-slate-400">
+            <p className="mt-2 flex items-center gap-2 break-all text-sm text-muted dark:text-slate-400">
               <Mail size={16} />
               {userProfile?.email || user?.email}
             </p>
@@ -147,7 +147,7 @@ export default function Profile() {
               </DashboardCard>
             </div>
 
-            <Card className="mt-5">
+            <Card className="mt-5 min-w-0">
               <h2 className="text-xl font-bold text-ink dark:text-slate-100">Recent patient activity</h2>
               <div className="mt-4 grid gap-3">
                 {recentActivity.length === 0 && (
@@ -156,10 +156,10 @@ export default function Profile() {
                   </p>
                 )}
                 {recentActivity.map((session) => (
-                  <div key={session.id} className="rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
+                  <div key={session.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
-                        <p className="font-bold text-ink dark:text-slate-100">{session.patient.displayName || "Patient"}</p>
+                      <div className="min-w-0">
+                        <p className="break-words font-bold text-ink dark:text-slate-100">{session.patient.displayName || "Patient"}</p>
                         <p className="mt-1 text-sm text-muted dark:text-slate-400">{formatDate(session.createdAt)}</p>
                         <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold ${riskTone(session.riskLevel)}`}>
                           {session.riskLevel || "Assessment"} risk
@@ -167,7 +167,7 @@ export default function Profile() {
                       </div>
                       {session.reportUrl && (
                         <a href={session.reportUrl} target="_blank" rel="noreferrer">
-                          <Button variant="secondary">
+                          <Button variant="secondary" className="w-full sm:w-auto">
                             <Download size={17} />
                             Report
                           </Button>
@@ -209,7 +209,7 @@ export default function Profile() {
               </DashboardCard>
             </div>
 
-            <Card className="mt-5">
+            <Card className="mt-5 min-w-0">
               <h2 className="text-xl font-bold text-ink dark:text-slate-100">Assessment history</h2>
               <div className="mt-4 grid gap-3">
                 {sessions.length === 0 && (
@@ -221,9 +221,9 @@ export default function Profile() {
                   </div>
                 )}
                 {sessions.map((session) => (
-                  <div key={session.id} className="rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
+                  <div key={session.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
+                      <div className="min-w-0">
                         <p className="flex items-center gap-2 text-sm text-muted dark:text-slate-400">
                           <CalendarDays size={16} />
                           {formatDate(session.createdAt)}
@@ -231,13 +231,13 @@ export default function Profile() {
                         <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold ${riskTone(session.riskLevel)}`}>
                           {session.riskLevel || "Assessment"} risk
                         </span>
-                        <p className="mt-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                        <p className="mt-3 break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                           Cycle prediction: {session.cyclePrediction || "Unavailable"}
                         </p>
                       </div>
                       {session.reportUrl && (
                         <a href={session.reportUrl} target="_blank" rel="noreferrer">
-                          <Button variant="secondary">
+                          <Button variant="secondary" className="w-full sm:w-auto">
                             <Download size={17} />
                             Report
                           </Button>

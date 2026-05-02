@@ -24,6 +24,54 @@ function nextPeriodLabel(value) {
   return value;
 }
 
+function compactDateLabel(value) {
+  if (!value || value === "Add Date") return value;
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return parsed;
+}
+
+function metricValueLines(label, value, compact) {
+  if (label === "Next Period") {
+    const parsedValue =
+      value instanceof Date
+        ? value
+        : typeof value === "string"
+          ? new Date(value)
+          : null;
+
+    if (parsedValue instanceof Date && !Number.isNaN(parsedValue.getTime())) {
+      const month = parsedValue.toLocaleDateString("en-US", { month: "long" });
+      const date = parsedValue.toLocaleDateString("en-US", {
+        day: "2-digit",
+        year: "numeric",
+      });
+      return [month, date];
+    }
+
+    if (typeof value === "string" && value.includes(",")) {
+      const [firstPart, ...rest] = value.split(",");
+      if (firstPart && rest.length > 0) {
+        return [firstPart.trim(), rest.join(",").trim()];
+      }
+    }
+
+    return [String(value)];
+  }
+
+  if (!compact) return [String(value)];
+
+  if (label === "Overall Health" && typeof value === "string") {
+    if (value === "Needs Care") return ["Needs", "Care"];
+    if (value === "Good Health") return ["Good", "Health"];
+    return value.split(" ");
+  }
+
+  return [String(value)];
+}
+
 function riskPercent(analysis) {
   if (typeof analysis.score === "number") return Math.min(100, Math.round((analysis.score / 10) * 100));
   if (analysis.riskLevel === "High") return 80;
@@ -66,37 +114,66 @@ export default function Dashboard() {
   const circumference = 2 * Math.PI * 46;
   const offset = circumference - (score / 100) * circumference;
   const doctorStatus = userProfile?.doctorStatus || "none";
-
   return (
     <PatientDashboardShell assistant={<SheCareAssistant sessions={sessions} />}>
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {({ isAssistantOpen }) => {
+        const summaryGridClass = isAssistantOpen ? "md:grid-cols-2" : "md:grid-cols-2 xl:grid-cols-4";
+        const detailGridClass = isAssistantOpen ? "2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]" : "xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]";
+        const summaryCardClass = isAssistantOpen ? "rounded-[1.75rem] p-5" : "rounded-3xl p-5";
+        const summaryValueClass = isAssistantOpen ? "mt-3 text-[1.6rem] leading-tight sm:text-[1.85rem]" : "mt-4 text-2xl";
+        const summarySubClass = isAssistantOpen ? "mt-3 text-sm leading-6" : "mt-2 text-sm";
+        const summaryIconWrapClass = isAssistantOpen ? "h-14 w-14 rounded-3xl" : "h-14 w-14 rounded-3xl";
+        const summaryIconClass = isAssistantOpen ? 26 : 27;
+        const periodValue = nextPeriodLabel(analysis.cyclePrediction);
+        const compactPeriodValue = isAssistantOpen ? compactDateLabel(periodValue) : periodValue;
+
+        return (
+      <>
+      <div className={`grid gap-5 ${summaryGridClass}`}>
         {[
-          [CalendarDays, "Next Period", nextPeriodLabel(analysis.cyclePrediction), sessions[0]?.answers?.last_period || "Track date"],
+          [CalendarDays, "Next Period", compactPeriodValue, sessions[0]?.answers?.last_period || "Track date"],
           [Zap, "Cycle Length", "28 Days", "Regular"],
           [ShieldCheck, "PCOS Risk", analysis.riskLevel, score ? `Risk: ${score}%` : "Risk pending"],
           [HeartPulse, "Overall Health", analysis.riskLevel === "High" ? "Needs Care" : "Good", "Keep it up!"],
-        ].map(([Icon, label, value, sub]) => (
-          <section key={label} className="shecare-card rounded-3xl p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
+        ].map(([Icon, label, value, sub]) => {
+          const valueLines = metricValueLines(label, value, isAssistantOpen);
+          const labelValueClass =
+            label === "Next Period"
+              ? isAssistantOpen
+                ? "text-[1.45rem] sm:text-[1.7rem]"
+                : "text-[1.35rem] sm:text-[1.55rem]"
+              : isAssistantOpen && label === "Overall Health"
+              ? "text-[1.45rem] sm:text-[1.7rem]"
+                : "";
+
+          return (
+          <section key={label} className={`shecare-card min-w-0 ${summaryCardClass}`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
-                <p className="mt-4 text-2xl font-extrabold text-slate-950 dark:text-white">{value}</p>
-                <p className="mt-2 text-sm font-semibold text-emerald-600 dark:text-emerald-300">{sub}</p>
+                <div className={`font-extrabold text-slate-950 dark:text-white ${summaryValueClass} ${labelValueClass}`}>
+                  {valueLines.map((line) => (
+                    <span key={`${label}-${line}`} className="block whitespace-nowrap">
+                      {line}
+                    </span>
+                  ))}
+                </div>
+                <p className={`break-words font-semibold text-emerald-600 dark:text-emerald-300 ${summarySubClass}`}>{sub}</p>
               </div>
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-3xl bg-health-lavender text-health-purple">
-                <Icon size={27} />
+              <span className={`grid shrink-0 place-items-center bg-health-lavender text-health-purple ${summaryIconWrapClass}`}>
+                <Icon size={summaryIconClass} />
               </span>
             </div>
           </section>
-        ))}
+        )})}
       </div>
 
-      <section className="purple-gradient mt-5 grid items-center gap-6 rounded-3xl p-6 shadow-glass md:grid-cols-[1fr_auto]">
-        <div className="flex items-center gap-5">
+      <section className="purple-gradient mt-5 grid items-center gap-6 overflow-hidden rounded-3xl p-5 shadow-glass sm:p-6 md:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
           <div className="hidden h-32 w-32 shrink-0 place-items-center rounded-full bg-white/70 text-health-purple shadow-sm md:grid">
             <Stethoscope size={56} />
           </div>
-          <div>
+          <div className="min-w-0">
             <h2 className="text-2xl font-extrabold text-health-purple">Recent AI risk analysis</h2>
             <p className="mt-3 max-w-xl leading-7 text-slate-700 dark:text-slate-300">
               Your latest survey indicates <strong>{analysis.riskLevel}</strong> risk. Review your reports and follow the recommendations generated from your answers.
@@ -131,15 +208,15 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="shecare-card rounded-3xl p-6">
-          <div className="flex items-center justify-between">
+      <div className={`mt-5 grid gap-5 ${detailGridClass}`}>
+        <section className="shecare-card min-w-0 rounded-3xl p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Health Overview</h2>
             <span className="rounded-2xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 dark:border-white/10 dark:text-slate-300">
               This Month
             </span>
           </div>
-          <div className="mt-7 h-56 rounded-3xl bg-gradient-to-b from-fuchsia-50 to-white p-5 dark:from-white/10 dark:to-transparent">
+          <div className="mt-7 h-56 overflow-hidden rounded-3xl bg-gradient-to-b from-fuchsia-50 to-white p-4 sm:p-5 dark:from-white/10 dark:to-transparent">
             <svg viewBox="0 0 520 180" className="h-full w-full">
               {[0, 45, 90, 135].map((y) => (
                 <line key={y} x1="20" x2="500" y1={20 + y} y2={20 + y} stroke="#e5e7eb" />
@@ -164,7 +241,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        <section className="shecare-card rounded-3xl p-6">
+        <section className="shecare-card min-w-0 rounded-3xl p-5 sm:p-6">
           <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Quick Actions</h2>
           <div className="mt-5 grid gap-3">
             {[
@@ -173,34 +250,29 @@ export default function Dashboard() {
               ["/pcos-risk", UploadCloud, "Upload Lab Report", "Attach report during survey"],
               ["/history", FileText, "View Assessment History", "Track your progress"],
             ].map(([to, Icon, title, subtitle]) => (
-              <Link key={title} to={to} className="flex items-center gap-4 rounded-2xl border-b border-slate-100 p-3 transition hover:bg-health-lavender dark:border-white/10 dark:hover:bg-white/10">
+              <Link key={title} to={to} className="flex min-w-0 items-center gap-4 rounded-2xl border-b border-slate-100 p-3 transition hover:bg-health-lavender dark:border-white/10 dark:hover:bg-white/10">
                 <span className="grid h-11 w-11 place-items-center rounded-2xl bg-health-lavender text-health-purple">
                   <Icon size={21} />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-bold text-slate-950 dark:text-white">{title}</span>
-                  <span className="text-sm text-slate-500 dark:text-slate-400">{subtitle}</span>
+                  <span className="block break-words font-bold text-slate-950 dark:text-white">{title}</span>
+                  <span className="break-words text-sm text-slate-500 dark:text-slate-400">{subtitle}</span>
                 </span>
-                <ChevronRight size={19} className="text-health-purple" />
+                <ChevronRight size={19} className="shrink-0 text-health-purple" />
               </Link>
             ))}
           </div>
         </section>
       </div>
-
-      <section className="shecare-card mt-5 rounded-3xl p-6 xl:hidden">
-        <SheCareAssistant sessions={sessions} />
-      </section>
-
       <section className="mt-5 rounded-3xl bg-health-lavender p-5 dark:bg-white/10">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             <span className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-health-purple dark:bg-white/10">
               <ShieldCheck />
             </span>
-            <div>
+            <div className="min-w-0">
               <p className="font-extrabold text-health-purple dark:text-violet-200">Privacy First</p>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="break-words text-sm text-slate-600 dark:text-slate-300">
                 {doctorStatus === "accepted"
                   ? `Your accepted doctor can review your submissions.`
                   : doctorStatus === "pending"
@@ -211,7 +283,7 @@ export default function Dashboard() {
           </div>
           {analysis.reportUrl && (
             <a href={analysis.reportUrl} target="_blank" rel="noreferrer">
-              <Button variant="secondary">
+              <Button variant="secondary" className="w-full sm:w-auto">
                 <Download size={17} />
                 Download Report
               </Button>
@@ -220,7 +292,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/10">
+      <section className="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/10 sm:p-6">
         <h2 className="text-xl font-extrabold text-slate-950 dark:text-white">Health Insights</h2>
         <div className="mt-4 grid gap-3">
           {loading && <div className="loader" />}
@@ -231,12 +303,12 @@ export default function Dashboard() {
           )}
           {sessions.map((session) => (
             <div key={session.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950/30">
-              <div>
+              <div className="min-w-0">
                 <p className="font-bold text-slate-950 dark:text-white">{session.riskLevel || "Assessment"} risk</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{session.cyclePrediction || "Cycle prediction unavailable"}</p>
+                <p className="break-words text-sm text-slate-500 dark:text-slate-400">{session.cyclePrediction || "Cycle prediction unavailable"}</p>
               </div>
               {session.reportUrl && (
-                <a className="text-sm font-bold text-health-purple" href={session.reportUrl} target="_blank" rel="noreferrer">
+                <a className="shrink-0 text-sm font-bold text-health-purple" href={session.reportUrl} target="_blank" rel="noreferrer">
                   Download
                 </a>
               )}
@@ -244,6 +316,9 @@ export default function Dashboard() {
           ))}
         </div>
       </section>
+      </>
+        );
+      }}
     </PatientDashboardShell>
   );
 }

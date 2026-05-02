@@ -56,7 +56,7 @@ export default function FileUploader({ uid, onUploaded }) {
         className="sr-only"
         onChange={handleFileChange}
       />
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-health-green">
           <UploadCloud size={22} className="text-emerald-700" />
         </span>
@@ -69,7 +69,7 @@ export default function FileUploader({ uid, onUploaded }) {
             </div>
           )}
         </div>
-        {uploading && <span className="text-sm font-semibold text-muted dark:text-slate-400">{progress}%</span>}
+        {uploading && <span className="text-sm font-semibold text-muted dark:text-slate-400 sm:shrink-0">{progress}%</span>}
       </div>
     </label>
   );

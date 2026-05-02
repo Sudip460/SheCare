@@ -59,7 +59,7 @@ export default function SheCareAssistant({ sessions = [], className = "" }) {
   }
 
   return (
-    <div className={`flex h-full flex-col ${className}`}>
+    <div className={`flex h-full min-h-[24rem] flex-col ${className}`}>
       <div className="flex items-center gap-3">
         <span className="grid h-14 w-14 place-items-center rounded-3xl bg-white text-health-purple shadow-sm dark:bg-white/10">
           <Bot size={29} />
@@ -77,7 +77,7 @@ export default function SheCareAssistant({ sessions = [], className = "" }) {
         {messages.map((item, index) => (
           <div
             key={`${item.role}-${index}`}
-            className={`rounded-3xl p-4 shadow-sm ${
+            className={`break-words rounded-3xl p-4 shadow-sm ${
               item.role === "user"
                 ? "ml-8 bg-health-purple text-white"
                 : "bg-white text-slate-900 dark:bg-white/10 dark:text-slate-100"
@@ -88,14 +88,14 @@ export default function SheCareAssistant({ sessions = [], className = "" }) {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-5 flex gap-2 rounded-3xl bg-white p-2 shadow-sm dark:bg-white/10">
+      <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-2 rounded-3xl bg-white p-2 shadow-sm dark:bg-white/10 sm:flex-row">
         <input
           value={input}
           onChange={(event) => setInput(event.target.value)}
           placeholder="Ask about your health..."
           className="min-w-0 flex-1 bg-transparent px-3 text-sm outline-none placeholder:text-slate-400 dark:text-slate-100"
         />
-        <Button type="submit" className="h-11 w-11 rounded-2xl p-0">
+        <Button type="submit" className="h-11 w-full rounded-2xl px-4 sm:w-11 sm:p-0">
           <Send size={17} />
         </Button>
       </form>

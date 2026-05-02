@@ -48,10 +48,10 @@ export default function PatientProfile() {
 
   return (
     <PatientDashboardShell assistant={<SheCareAssistant sessions={sessions} />}>
-      <div className="mb-6">
+      <div className="mb-6 min-w-0">
         <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Patient profile</p>
-        <h2 className="mt-2 text-3xl font-extrabold text-slate-950 dark:text-white">{userProfile?.displayName || user?.email}</h2>
-        <p className="mt-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+        <h2 className="mt-2 break-words text-3xl font-extrabold text-slate-950 dark:text-white">{userProfile?.displayName || user?.email}</h2>
+        <p className="mt-2 flex items-center gap-2 break-all text-sm text-slate-500 dark:text-slate-400">
           <Mail size={16} />
           {userProfile?.email || user?.email}
         </p>
@@ -91,7 +91,7 @@ export default function PatientProfile() {
             </DashboardCard>
           </div>
 
-          <Card className="mt-5">
+          <Card className="mt-5 min-w-0">
             <h2 className="text-xl font-bold text-ink dark:text-slate-100">Assessment history</h2>
             <div className="mt-4 grid gap-3">
               {sessions.length === 0 && (
@@ -103,9 +103,9 @@ export default function PatientProfile() {
                 </div>
               )}
               {sessions.map((session) => (
-                <div key={session.id} className="rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
+                <div key={session.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
                   <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div>
+                    <div className="min-w-0">
                       <p className="flex items-center gap-2 text-sm text-muted dark:text-slate-400">
                         <CalendarDays size={16} />
                         {formatDate(session.createdAt)}
@@ -113,13 +113,13 @@ export default function PatientProfile() {
                       <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-bold ${riskTone(session.riskLevel)}`}>
                         {session.riskLevel || "Assessment"} risk
                       </span>
-                      <p className="mt-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                      <p className="mt-3 break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                         Cycle prediction: {session.cyclePrediction || "Unavailable"}
                       </p>
                     </div>
                     {session.reportUrl && (
                       <a href={session.reportUrl} target="_blank" rel="noreferrer">
-                        <Button variant="secondary">
+                        <Button variant="secondary" className="w-full sm:w-auto">
                           <Download size={17} />
                           Report
                         </Button>

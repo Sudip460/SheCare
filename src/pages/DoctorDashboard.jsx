@@ -113,9 +113,9 @@ export default function DoctorDashboard() {
       <Navbar />
       <section className="mx-auto max-w-6xl px-5 pb-12">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-muted dark:text-slate-400">Doctor workspace</p>
-            <h1 className="mt-2 text-4xl font-bold text-ink dark:text-slate-100">Patient review desk</h1>
+            <h1 className="mt-2 break-words text-4xl font-bold text-ink dark:text-slate-100">Patient review desk</h1>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-3xl border border-white/80 bg-white/80 px-5 py-4 shadow-glass dark:border-white/10 dark:bg-white/10">
@@ -155,17 +155,17 @@ export default function DoctorDashboard() {
               </p>
             )}
             {pendingRequests.map((patient) => (
-              <div key={patient.id} className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/75 p-4 dark:border-white/10 dark:bg-white/10">
-                <div>
-                  <p className="font-bold text-ink dark:text-slate-100">{patient.displayName || "Patient"}</p>
-                  <p className="text-sm text-muted dark:text-slate-400">{patient.email}</p>
+            <div key={patient.id} className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-white/75 p-4 dark:border-white/10 dark:bg-white/10">
+                <div className="min-w-0">
+                  <p className="break-words font-bold text-ink dark:text-slate-100">{patient.displayName || "Patient"}</p>
+                  <p className="break-all text-sm text-muted dark:text-slate-400">{patient.email}</p>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="secondary" onClick={() => handleRequestDecision(patient, "reject")}>
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                  <Button variant="secondary" onClick={() => handleRequestDecision(patient, "reject")} className="w-full sm:w-auto">
                     <X size={17} />
                     Reject
                   </Button>
-                  <Button onClick={() => handleRequestDecision(patient, "accept")}>
+                  <Button onClick={() => handleRequestDecision(patient, "accept")} className="w-full sm:w-auto">
                     <Check size={17} />
                     Accept
                   </Button>
@@ -175,7 +175,7 @@ export default function DoctorDashboard() {
           </div>
         </Card>
 
-        <div className="grid gap-5 lg:grid-cols-[340px_1fr]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(17rem,21.25rem)_minmax(0,1fr)]">
           <Card className="p-5">
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-2xl bg-health-blue">
@@ -217,24 +217,24 @@ export default function DoctorDashboard() {
                         : "border-slate-200 bg-white/75 dark:border-white/10 dark:bg-white/10"
                     }`}
                   >
-                    <p className="font-bold text-ink dark:text-slate-100">{patient.displayName || "Patient"}</p>
-                    <p className="mt-1 truncate text-sm text-muted dark:text-slate-400">{patient.email}</p>
+                    <p className="break-words font-bold text-ink dark:text-slate-100">{patient.displayName || "Patient"}</p>
+                    <p className="mt-1 break-all text-sm text-muted dark:text-slate-400">{patient.email}</p>
                   </button>
                 );
               })}
             </div>
           </Card>
 
-          <div className="space-y-5">
-            <Card>
+          <div className="min-w-0 space-y-5">
+            <Card className="min-w-0">
               {selectedPatient ? (
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-muted dark:text-slate-400">Selected patient</p>
-                    <h2 className="mt-1 text-2xl font-bold text-ink dark:text-slate-100">
+                    <h2 className="mt-1 break-words text-2xl font-bold text-ink dark:text-slate-100">
                       {selectedPatient.displayName || "Patient"}
                     </h2>
-                    <p className="mt-2 text-sm text-muted dark:text-slate-400">{selectedPatient.email}</p>
+                    <p className="mt-2 break-all text-sm text-muted dark:text-slate-400">{selectedPatient.email}</p>
                   </div>
                   <div className="rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/10">
                     <p className="text-sm text-muted dark:text-slate-400">Submissions</p>
@@ -246,7 +246,7 @@ export default function DoctorDashboard() {
               )}
             </Card>
 
-            <Card>
+            <Card className="min-w-0">
               <div className="mb-5 flex items-center gap-3">
                 <span className="grid h-11 w-11 place-items-center rounded-2xl bg-health-green">
                   <FileText className="text-emerald-700" />
@@ -265,9 +265,9 @@ export default function DoctorDashboard() {
                   </p>
                 )}
                 {sessions.map((session) => (
-                  <article key={session.id} className="rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
+                  <article key={session.id} className="min-w-0 rounded-3xl border border-slate-200 bg-white/75 p-5 dark:border-white/10 dark:bg-white/10">
                     <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
+                      <div className="min-w-0">
                         <span className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 dark:bg-white/10 dark:text-slate-300">
                           {session.riskLevel || "Assessment"} risk
                         </span>
@@ -275,13 +275,13 @@ export default function DoctorDashboard() {
                           <CalendarDays size={16} />
                           {formatDate(session.createdAt)}
                         </p>
-                        <p className="mt-3 text-sm leading-6 text-slate-700 dark:text-slate-300">
+                        <p className="mt-3 break-words text-sm leading-6 text-slate-700 dark:text-slate-300">
                           Cycle prediction: {session.cyclePrediction || "Unavailable"}
                         </p>
                       </div>
                       {session.reportUrl && (
                         <a href={session.reportUrl} target="_blank" rel="noreferrer">
-                          <Button variant="secondary">
+                          <Button variant="secondary" className="w-full sm:w-auto">
                             <Download size={17} />
                             Report
                           </Button>

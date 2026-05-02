@@ -16,14 +16,14 @@ export default function Navbar() {
   }
 
   return (
-    <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-6">
+    <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6">
       <Link to={homePath} className="inline-flex min-w-0 items-center gap-3 text-lg font-bold text-ink dark:text-slate-100">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white shadow-soft dark:bg-white/10">
           <HeartPulse size={22} className="text-health-rose" />
         </span>
         <span className="truncate">SheCare AI</span>
       </Link>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-end gap-2">
         {user && userProfile?.role === "patient" && (
           <Link className="hidden text-sm font-bold text-slate-600 dark:text-slate-300 md:inline-flex" to="/dashboard">
             Dashboard

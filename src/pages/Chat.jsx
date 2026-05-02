@@ -100,8 +100,8 @@ export default function Chat() {
 
   return (
     <PatientDashboardShell assistant={<SheCareAssistant sessions={[]} />}>
-      <section className="grid gap-5 lg:grid-cols-[1fr_340px]">
-        <div className="glass-card flex min-h-[72vh] flex-col rounded-3xl">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,21.25rem)]">
+        <div className="glass-card flex min-h-[70vh] min-w-0 flex-col rounded-3xl">
           <div className="border-b border-white/80 p-5 dark:border-white/10">
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 place-items-center rounded-2xl bg-health-blue">
@@ -120,7 +120,7 @@ export default function Chat() {
             </div>
           </div>
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-5">
+          <div className="flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
             {messages.map((item, index) => (
               <ChatBubble key={`${item.role}-${index}`} role={item.role}>
                 {item.text}
@@ -130,7 +130,7 @@ export default function Chat() {
             <div ref={bottomRef} />
           </div>
 
-          <form className="flex gap-3 border-t border-white/80 p-4 dark:border-white/10" onSubmit={handleSend}>
+          <form className="flex flex-col gap-3 border-t border-white/80 p-4 dark:border-white/10 sm:flex-row" onSubmit={handleSend}>
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -138,13 +138,13 @@ export default function Chat() {
               disabled={typing || isComplete}
               className="min-w-0 flex-1 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-ink outline-none transition placeholder:text-slate-400 focus:border-health-sky focus:ring-4 focus:ring-health-blue disabled:bg-slate-100 dark:border-white/10 dark:bg-white/10 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-500/20 dark:disabled:bg-white/5"
             />
-            <Button type="submit" disabled={typing || isComplete || !message.trim()} className="px-4">
+            <Button type="submit" disabled={typing || isComplete || !message.trim()} className="w-full px-4 sm:w-auto">
               <Send size={18} />
             </Button>
           </form>
         </div>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 xl:min-w-0">
           <FileUploader uid={user.uid} onUploaded={(file) => setUploadedFiles((files) => [...files, file])} />
           <div className="rounded-3xl border border-white/80 bg-white/80 p-5 shadow-glass dark:border-white/10 dark:bg-white/10">
             <p className="text-sm font-semibold text-muted dark:text-slate-400">Assessment progress</p>
