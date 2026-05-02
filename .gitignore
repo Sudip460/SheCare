@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.local
+__pycache__/
+*.pyc
+.venv/
+server/serviceAccountKey.json
+server/generated_reports/*.pdf
+generated_reports/*.pdf

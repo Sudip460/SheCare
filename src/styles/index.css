@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #17202a;
+  background: #f8fbff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.dark {
+  color: #eef6ff;
+  background: #08111f;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.page-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(236, 72, 153, 0.1), transparent 30rem),
+    radial-gradient(circle at top right, rgba(124, 58, 237, 0.1), transparent 30rem),
+    #fbf9ff;
+  transition: background 180ms ease;
+}
+
+.dark .page-shell {
+  background:
+    radial-gradient(circle at top left, rgba(75, 139, 219, 0.22), transparent 34rem),
+    radial-gradient(circle at top right, rgba(51, 171, 142, 0.16), transparent 30rem),
+    linear-gradient(180deg, #0b1728 0%, #08111f 48%, #07101d 100%);
+}
+
+.shecare-card {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14px 36px rgba(31, 41, 55, 0.08);
+}
+
+.dark .shecare-card {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(15, 23, 42, 0.78);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
+}
+
+.purple-gradient {
+  background: linear-gradient(135deg, #fff7fd 0%, #f4edff 48%, #eef8ff 100%);
+}
+
+.dark .purple-gradient {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(236, 72, 153, 0.12));
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 20px 60px rgba(23, 32, 42, 0.08);
+  backdrop-filter: blur(18px);
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dark .glass-card {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(15, 27, 46, 0.76);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.loader {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 4px solid rgba(116, 184, 255, 0.25);
+  border-top-color: #4f9eed;
+  animation: spin 0.8s linear infinite;
+}
+
+.typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #6dd6b8;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
